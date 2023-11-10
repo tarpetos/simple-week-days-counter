@@ -12,6 +12,7 @@ class WeekDaysCounterApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("Weekdays Counter")
+        self.resizable(False, False)
 
         start_frame = self.build_date_frame("start")
         self.label_start_date = start_frame["frame"]
