@@ -1,8 +1,8 @@
-from week_day_counter import WeekDayCounterApp
+from week_days_counter import WeekDaysCounterApp
 
 
 def main():
-    app = WeekDayCounterApp()
+    app = WeekDaysCounterApp()
     app.start()
 
 

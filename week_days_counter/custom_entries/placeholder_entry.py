@@ -6,11 +6,7 @@ from ..types import Window
 
 class PlaceholderEntry(tk.Entry):
     def __init__(
-            self,
-            master: Optional[Window] = None,
-            placeholder: str = "",
-            *args,
-            **kwargs
+        self, master: Optional[Window] = None, placeholder: str = "", *args, **kwargs
     ) -> None:
         super().__init__(master, *args, **kwargs)
         self.placeholder = placeholder

@@ -35,10 +35,14 @@ class WeekDaysCounterApp(tk.Tk):
 
         self.buttons_frame = tk.Frame(self)
         self.calculate_button = tk.Button(
-            self.buttons_frame, text="Calculate week days", command=self.calculate_weekdays
+            self.buttons_frame,
+            text="Calculate week days",
+            command=self.calculate_weekdays,
         )
         self.randomize_button = tk.Button(
-            self.buttons_frame, text="Calculate randomize entries", command=self.randomize_entries
+            self.buttons_frame,
+            text="Calculate randomize entries",
+            command=self.randomize_entries,
         )
 
         self.result_text = tk.Text(self, height=7, state=tk.DISABLED)
@@ -52,24 +56,15 @@ class WeekDaysCounterApp(tk.Tk):
         input_date_frame = tk.Frame(self)
         label_day = tk.Label(input_date_frame, text="Day:")
         entry_day = DateEntry(
-            input_date_frame,
-            placeholder="1-31",
-            date_option=DateOption.DAY,
-            width=10
+            input_date_frame, placeholder="1-31", date_option=DateOption.DAY, width=10
         )
         label_month = tk.Label(input_date_frame, text="Month:")
         entry_month = DateEntry(
-            input_date_frame,
-            placeholder="1-12",
-            date_option=DateOption.MONTH,
-            width=10
+            input_date_frame, placeholder="1-12", date_option=DateOption.MONTH, width=10
         )
         label_year = tk.Label(input_date_frame, text="Year:")
         entry_year = DateEntry(
-            input_date_frame,
-            placeholder="2000",
-            date_option=DateOption.YEAR,
-            width=10
+            input_date_frame, placeholder="2000", date_option=DateOption.YEAR, width=10
         )
         return {
             "frame": input_date_frame,
@@ -80,8 +75,7 @@ class WeekDaysCounterApp(tk.Tk):
 
     @staticmethod
     def place_date_frame_widgets(
-            date_frame: DateFrame,
-            name_padding: Optional[LabelFramePadding] = None
+        date_frame: DateFrame, name_padding: Optional[LabelFramePadding] = None
     ) -> None:
         date_frame["frame_name"].pack(pady=name_padding if name_padding else 0)
         date_frame["frame"].pack()
@@ -118,12 +112,16 @@ class WeekDaysCounterApp(tk.Tk):
         self.randomize_entry(self.entry_end_year, DateOption.YEAR)
 
     @staticmethod
-    def get_later_date(start_date: datetime, end_date: datetime) -> Tuple[datetime, datetime]:
+    def get_later_date(
+        start_date: datetime, end_date: datetime
+    ) -> Tuple[datetime, datetime]:
         if start_date < end_date:
             return start_date, end_date
         return end_date, start_date
 
-    def count_weekdays_by_day(self, start_date_str: str, end_date_str: str) -> Optional[Dict[str, int]]:
+    def count_weekdays_by_day(
+        self, start_date_str: str, end_date_str: str
+    ) -> Optional[Dict[str, int]]:
         try:
             start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
             end_date = datetime.strptime(end_date_str, "%d-%m-%Y")
