@@ -1,9 +1,11 @@
 import random
+import time
 import tkinter as tk
 from datetime import datetime, timedelta
+from functools import lru_cache
 from tkinter import messagebox
 from typing import Dict, Optional, Tuple
-
+from deprecated import deprecated
 from .custom_entries import DateEntry
 from .types import DateOption, EntryFrameOption, DateFrame, LabelFramePadding
 
@@ -76,7 +78,7 @@ class WeekDaysCounterApp(tk.Tk):
 
     @staticmethod
     def place_date_frame_widgets(
-        date_frame: DateFrame, name_padding: Optional[LabelFramePadding] = None
+            date_frame: DateFrame, name_padding: Optional[LabelFramePadding] = None
     ) -> None:
         date_frame["frame_name"].pack(pady=name_padding if name_padding else 0)
         date_frame["frame"].pack()
@@ -114,22 +116,18 @@ class WeekDaysCounterApp(tk.Tk):
 
     @staticmethod
     def get_later_date(
-        start_date: datetime, end_date: datetime
+            start_date: datetime, end_date: datetime
     ) -> Tuple[datetime, datetime]:
         if start_date < end_date:
             return start_date, end_date
         return end_date, start_date
 
+    @lru_cache
     def count_weekdays_by_day(
-        self, start_date_str: str, end_date_str: str
+            self, start_date_str: str, end_date_str: str
     ) -> Optional[Dict[str, int]]:
-        try:
-            start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
-            end_date = datetime.strptime(end_date_str, "%d-%m-%Y")
-        except ValueError as e:
-            print(e)
-            messagebox.showerror(title="Invalid date", message=f"{str(e).capitalize()}")
-            return None
+        start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
+        end_date = datetime.strptime(end_date_str, "%d-%m-%Y")
 
         start_date, end_date = self.get_later_date(start_date, end_date)
 
@@ -143,12 +141,67 @@ class WeekDaysCounterApp(tk.Tk):
             "Sunday": 0,
         }
 
+        weekdays_map = {
+            0: "Monday",
+            1: "Tuesday",
+            2: "Wednesday",
+            3: "Thursday",
+            4: "Friday",
+            5: "Saturday",
+            6: "Sunday",
+        }
+        weekdays_count = self.summarize_days_fast(start_date, end_date, weekdays_count, weekdays_map)[0]
+
+        return weekdays_count
+
+    @staticmethod
+    @deprecated("Use method summarize_days_fast() instead.")
+    def summarize_days(
+            start_date: datetime,
+            end_date: datetime,
+            weekdays_count: Dict[str, int]
+    ) -> Tuple[Dict[str, int], float]:
+        start_time = time.perf_counter()
         current_date = start_date
         while current_date <= end_date:
             weekdays_count[current_date.strftime("%A")] += 1
             current_date += timedelta(days=1)
 
-        return weekdays_count
+        end_time = time.perf_counter()
+        execution_time = end_time - start_time
+        print(f"OLD: {execution_time} (s)")
+
+        return weekdays_count, execution_time
+
+    @staticmethod
+    def summarize_days_fast(
+            start_date: datetime,
+            end_date: datetime,
+            weekdays_count: Dict[str, int],
+            weekdays_map: Dict[int, str]
+    ) -> Tuple[Dict[str, int], float]:
+        start_time = time.perf_counter()
+        day_diff = (end_date - start_date).days
+        day_equal_num = day_diff // 7
+        division_reminder = day_diff % 7
+        start_week_number = start_date.weekday()
+        start_week_name = weekdays_map[start_week_number]
+
+        for key in weekdays_count:
+            weekdays_count[key] += day_equal_num
+
+        current_day_name = start_week_name
+        weekday_keys = list(weekdays_map.values())
+        for _ in range(division_reminder + 1):
+            weekdays_count[current_day_name] += 1
+            current_day_index = weekday_keys.index(current_day_name)
+            current_day_name = weekday_keys[(current_day_index + 1) % 7]
+
+        end_time = time.perf_counter()
+        execution_time = end_time - start_time
+        print(f"NEW: {execution_time} (s)")
+
+        return weekdays_count, execution_time
 
     @staticmethod
     def build_entry(*entries) -> str:
@@ -162,8 +215,15 @@ class WeekDaysCounterApp(tk.Tk):
             self.entry_end_day, self.entry_end_month, self.entry_end_year
         )
 
-        result = self.count_weekdays_by_day(start_date_input, end_date_input)
-        if result is None:
+        try:
+            result = self.count_weekdays_by_day(start_date_input, end_date_input)
+        except ValueError as e:
+            print(e)
+            messagebox.showerror(title="Invalid date", message=f"{str(e).capitalize()}")
+            return None
+        except OverflowError as e:
+            print(e)
+            messagebox.showerror(title="Invalid date", message=f"{str(e).capitalize()}")
             return None
 
         self.result_text.config(state=tk.NORMAL)
