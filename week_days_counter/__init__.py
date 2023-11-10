@@ -1,3 +1,3 @@
-from .counter_app import WeekDaysCounterApp
+from .app import WeekDaysCounter
 
-__all__ = ("WeekDaysCounterApp",)
+__all__ = ("WeekDaysCounter",)
