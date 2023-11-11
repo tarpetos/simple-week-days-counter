@@ -1,6 +1,5 @@
 import flet as ft
 
-from typing import Union
 from .date_input import DateInput
 from .grid_builder import GridBuilder
 from ..types import EntryFrameOption, DateOption

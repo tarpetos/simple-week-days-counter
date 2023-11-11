@@ -1,8 +1,9 @@
 import time
+import random
 from datetime import datetime
+from dataclasses import dataclass
 from typing import Dict, Tuple, Optional, Union
-
-from ..types import WeekDaysStatistic
+from ..types import DateOption, WeekDaysStatistic
 
 
 class WeekDaysCalculator:
@@ -20,17 +21,17 @@ class WeekDaysCalculator:
         self.start_date = start_date
         self.end_date = end_date
 
-    def count_control(self) -> Union[WeekDaysStatistic, ValueError, OverflowError]:
+    def count_control(self) -> Union[WeekDaysStatistic, str]:
         try:
             result = self._count_weekdays(self.start_date, self.end_date)
         except ValueError as exception_message:
-            return exception_message
+            return f"{exception_message}"
         except OverflowError as exception_message:
-            return exception_message
+            return f"{exception_message}"
         return result
 
     def _count_weekdays(
-            self, start_date_str: str, end_date_str: str
+        self, start_date_str: str, end_date_str: str
     ) -> Optional[WeekDaysStatistic]:
         start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
         end_date = datetime.strptime(end_date_str, "%d-%m-%Y")
@@ -55,7 +56,7 @@ class WeekDaysCalculator:
 
     @staticmethod
     def _get_later_date(
-            start_date: datetime, end_date: datetime
+        start_date: datetime, end_date: datetime
     ) -> Tuple[datetime, datetime]:
         if start_date < end_date:
             return start_date, end_date
@@ -63,10 +64,10 @@ class WeekDaysCalculator:
 
     @staticmethod
     def _summarize_days(
-            start_date: datetime,
-            end_date: datetime,
-            weekdays_count: WeekDaysStatistic,
-            weekdays_map: Dict[int, str],
+        start_date: datetime,
+        end_date: datetime,
+        weekdays_count: WeekDaysStatistic,
+        weekdays_map: Dict[int, str],
     ) -> Tuple[WeekDaysStatistic, float]:
         start_time = time.perf_counter()
         day_diff = (end_date - start_date).days
@@ -90,13 +91,6 @@ class WeekDaysCalculator:
         print(f"Performance: {execution_time} (s)")
 
         return weekdays_count, execution_time
-
-
-import random
-from dataclasses import dataclass
-from typing import Dict
-
-from ..types import DateOption
 
 
 @dataclass

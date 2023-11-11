@@ -1,15 +1,17 @@
 import flet as ft
 from typing import Callable, Optional
 from .date_frame import DateFrame
+from .toplevel_dialog import ToplevelDialog
 from .utils import WeekDaysCalculator, DateRandomizer
 from .grid_builder import GridBuilder
-from .window_config import WindowConfig
+from .config import WindowConfig
 from ..types import DateOption
 
 
 class WeekDaysCounterApp(ft.UserControl, GridBuilder):
     BUTTON_WIDTH = 400
     BUTTON_HEIGHT = 100
+    ERROR_DIALOG_TITLE = "ERROR"
 
     def __init__(self, config: WindowConfig) -> None:
         super().__init__()
@@ -69,10 +71,18 @@ class WeekDaysCounterApp(ft.UserControl, GridBuilder):
             ]
         ):
             error_message = "One or more input fields are empty!"
-            print(error_message)
+            ToplevelDialog(
+                self.page,
+                dialog_title=self.ERROR_DIALOG_TITLE,
+                dialog_content=error_message,
+            )
         else:
-            error_message = f"{str(result_data)[0].upper()}{str(result_data)[1:]}"
-            print(error_message)
+            error_message = f"{str(result_data)[0].upper()}{str(result_data)[1:]}.\n"
+            ToplevelDialog(
+                self.page,
+                dialog_title=self.ERROR_DIALOG_TITLE,
+                dialog_content=error_message,
+            )
 
         self.update()
 
@@ -89,9 +99,8 @@ class WeekDaysCounterApp(ft.UserControl, GridBuilder):
         self._insert_data_to_inputs(randomizer, self.start_date_frame)
         self._insert_data_to_inputs(randomizer, self.end_date_frame)
 
-    def build_button(
-        self, text: str, callback: Optional[Callable]
-    ) -> ft.ElevatedButton:
+    @staticmethod
+    def build_button(text: str, callback: Optional[Callable]) -> ft.ElevatedButton:
         return ft.ElevatedButton(text=text, on_click=callback, expand=True)
 
     def build(self) -> ft.Column:
