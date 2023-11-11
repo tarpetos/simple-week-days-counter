@@ -31,8 +31,6 @@ class DateInput(ft.TextField):
         elif min_value <= user_value <= max_value:
             self.value = user_input
         else:
-            self.value = user_input[:len(str(max_value)) - 1]
-        print("Current:", self.value)
-        print("Previous:", self.saved_input)
+            self.value = user_input[: len(str(max_value)) - 1]
 
         self.update()

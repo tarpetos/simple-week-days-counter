@@ -18,5 +18,5 @@ class GridBuilder:
             controls=[*controls],
             spacing=self.COLUMN_SPACING,
             alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )

@@ -1,5 +1,6 @@
 import flet as ft
 
+from typing import Union
 from .date_input import DateInput
 from .grid_builder import GridBuilder
 from ..types import EntryFrameOption, DateOption
@@ -18,16 +19,28 @@ class DateFrame(ft.UserControl, GridBuilder):
         self.month_label = ft.Text(value="Month", text_align=ft.TextAlign.CENTER)
         self.year_label = ft.Text(value="Year", text_align=ft.TextAlign.CENTER)
 
-        self.day_input = DateInput(DateOption.DAY, text_align=ft.TextAlign.CENTER, label="1-31", max_length=2)
-        self.month_input = DateInput(DateOption.MONTH, text_align=ft.TextAlign.CENTER, label="1-12", max_length=2)
-        self.year_input = DateInput(DateOption.YEAR, text_align=ft.TextAlign.CENTER, label="1000-9999", max_length=4)
+        self.day_input = DateInput(
+            DateOption.DAY, text_align=ft.TextAlign.CENTER, label="1-31", max_length=2
+        )
+        self.month_input = DateInput(
+            DateOption.MONTH, text_align=ft.TextAlign.CENTER, label="1-12", max_length=2
+        )
+        self.year_input = DateInput(
+            DateOption.YEAR,
+            text_align=ft.TextAlign.CENTER,
+            label="1000-9999",
+            max_length=4,
+        )
 
         self.rows = [
             self.build_row(self.title_label),
             self.build_row(
-                self.day_label, self.day_input,
-                self.month_label, self.month_input,
-                self.year_label, self.year_input,
+                self.day_label,
+                self.day_input,
+                self.month_label,
+                self.month_input,
+                self.year_label,
+                self.year_input,
             ),
         ]
 
